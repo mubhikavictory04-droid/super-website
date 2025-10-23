@@ -1,0 +1,2979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSC - Electronic Procurement System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a5276;
+            --secondary: #2e86c1;
+            --success: #28b463;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #17a2b8;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --sidebar: #1a5276;
+            --sidebar-hover: #2e86c1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23ffffff" opacity="0.03"><polygon points="50,0 100,100 0,100"/></svg>');
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s;
+        }
+        
+        .login-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .login-header p {
+            color: var(--dark);
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 134, 193, 0.2);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--dark);
+        }
+        
+        /* Main Application Layout */
+        #main-app {
+            display: none;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            width: auto;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .app-layout {
+            display: flex;
+            min-height: calc(100vh - 80px);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar);
+            color: white;
+            padding: 20px 0;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .menu-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: var(--sidebar-hover);
+        }
+        
+        .menu-item.active {
+            background: var(--sidebar-hover);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background: #f5f7fa;
+            overflow-y: auto;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .page-title {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .page-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #eef2f7;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eef2f7;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* Dashboard Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+        
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+        
+        .stat-card.danger {
+            border-left-color: var(--danger);
+        }
+        
+        .stat-card.info {
+            border-left-color: var(--info);
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .stat-card.warning .stat-icon {
+            color: var(--warning);
+        }
+        
+        .stat-card.success .stat-icon {
+            color: var(--success);
+        }
+        
+        .stat-card.danger .stat-icon {
+            color: var(--danger);
+        }
+        
+        .stat-card.info .stat-icon {
+            color: var(--info);
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: var(--dark);
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        /* Form Styles */
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            flex: 1;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        button.success {
+            background-color: var(--success);
+        }
+        
+        button.warning {
+            background-color: var(--warning);
+        }
+        
+        button.danger {
+            background-color: var(--danger);
+        }
+        
+        button.info {
+            background-color: var(--info);
+        }
+        
+        .item-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .item-row input, .item-row select {
+            flex: 1;
+        }
+        
+        .item-row button {
+            flex: 0 0 auto;
+            width: auto;
+        }
+        
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eef2f7;
+        }
+        
+        th {
+            background: var(--light);
+            font-weight: 600;
+            color: var(--dark);
+            position: sticky;
+            top: 0;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Status Badges */
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            display: inline-block;
+        }
+        
+        .status.draft {
+            background-color: #f0f0f0;
+            color: #666;
+        }
+        
+        .status.submitted {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status.review {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status.approved {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .status.rejected {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+        
+        .status.procurement {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+        
+        .status.completed {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        /* Action Buttons */
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s;
+            max-width: 400px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background-color: var(--success);
+        }
+        
+        .notification.error {
+            background-color: var(--danger);
+        }
+        
+        .notification.warning {
+            background-color: var(--warning);
+        }
+        
+        .notification.info {
+            background-color: var(--info);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: scaleIn 0.3s;
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--dark);
+            width: auto;
+            padding: 5px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+            justify-content: flex-end;
+        }
+        
+        /* Workflow Steps */
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+        
+        .workflow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .step-active .step-number {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .step-completed .step-number {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Quotation Comparison */
+        .quotation-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .quotation-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .quotation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .quotation-card.selected {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+        }
+        
+        .quotation-card.best-price {
+            border-color: var(--success);
+            background: #f0f9f0;
+        }
+        
+        .quotation-card.best-delivery {
+            border-color: var(--info);
+            background: #f0f7ff;
+        }
+        
+        .quotation-card h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        
+        .quotation-details {
+            margin-bottom: 15px;
+        }
+        
+        .quotation-details div {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .quotation-details strong {
+            color: var(--dark);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .app-layout {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .item-row {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        .badge {
+            background: var(--warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .comparison-badge {
+            background: var(--info);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+        
+        .best-badge {
+            background: var(--success);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1><i class="fas fa-shopping-cart"></i> JSC eProcure</h1>
+                <p>Electronic Purchasing Requisition & Procurement System</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-user"></i> Username</label>
+                    <input type="text" id="username" placeholder="Enter your username" required>
+                    <div class="error-message" id="username-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="password"><i class="fas fa-lock"></i> Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                    <div class="error-message" id="password-error"></div>
+                </div>
+                <div class="form-group">
+                    <label for="department"><i class="fas fa-building"></i> Department</label>
+                    <select id="department" required>
+                        <option value="">Select Department</option>
+                        <option value="IT">IT Department</option>
+                        <option value="Administration">Administration</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Procurement">Procurement</option>
+                        <option value="Head Office">Head Office</option>
+                        <option value="Provincial Office">Provincial Office</option>
+                    </select>
+                    <div class="error-message" id="department-error"></div>
+                </div>
+                <div class="error-message" id="login-error" style="text-align: center; margin-bottom: 15px;"></div>
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Login to System</button>
+            </form>
+            <div class="login-footer">
+                <p>JSC Organization &copy; 2025</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app">
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <i class="fas fa-shopping-cart"></i> JSC eProcure
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar">JD</div>
+                        <div>
+                            <div id="user-display-name">JSC User</div>
+                            <div id="user-role">Administrator</div>
+                        </div>
+                        <button class="logout-btn" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="app-layout">
+            <nav class="sidebar">
+                <ul class="sidebar-menu">
+                    <li class="menu-item active" data-tab="dashboard">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </li>
+                    <li class="menu-item" data-tab="create-request">
+                        <i class="fas fa-plus-circle"></i> Create Request
+                    </li>
+                    <li class="menu-item" data-tab="my-requests">
+                        <i class="fas fa-list-alt"></i> My Requests
+                    </li>
+                    <li class="menu-item" data-tab="approvals">
+                        <i class="fas fa-check-double"></i> Approvals
+                        <span class="badge" id="approval-badge">0</span>
+                    </li>
+                    <li class="menu-item" data-tab="procurement">
+                        <i class="fas fa-file-invoice-dollar"></i> Procurement
+                    </li>
+                    <li class="menu-item" data-tab="reports">
+                        <i class="fas fa-chart-bar"></i> Reports
+                    </li>
+                </ul>
+            </nav>
+            
+            <main class="main-content">
+                <div class="container">
+                    <!-- Dashboard Tab -->
+                    <div id="dashboard" class="tab-content active">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-tachometer-alt"></i> JSC Procurement Dashboard</h1>
+                            <div class="page-actions">
+                                <button class="btn btn-primary" id="refresh-dashboard"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            </div>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <div class="stat-number" id="total-requests">0</div>
+                                <div class="stat-label">Total Requests</div>
+                            </div>
+                            <div class="stat-card warning">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-number" id="pending-approvals">0</div>
+                                <div class="stat-label">Pending Approval</div>
+                            </div>
+                            <div class="stat-card info">
+                                <div class="stat-icon">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </div>
+                                <div class="stat-number" id="in-procurement">0</div>
+                                <div class="stat-label">In Procurement</div>
+                            </div>
+                            <div class="stat-card success">
+                                <div class="stat-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="stat-number" id="completed-month">0</div>
+                                <div class="stat-label">Completed This Month</div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Recent Activity</h3>
+                            </div>
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Department</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Last Updated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recent-activity-table">
+                                        <tr>
+                                            <td colspan="5" class="empty-state">
+                                                <i class="fas fa-inbox"></i>
+                                                <p>No recent activity</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Create Request Tab -->
+                    <div id="create-request" class="tab-content">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-plus-circle"></i> Create Purchase Request</h1>
+                        </div>
+                        
+                        <div class="card">
+                            <form id="purchase-request-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="request-title">Request Title *</label>
+                                        <input type="text" id="request-title" placeholder="Enter a descriptive title for your request" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="department">Department *</label>
+                                        <select id="pr-department" required>
+                                            <option value="">Select Department</option>
+                                            <option value="IT">IT Department</option>
+                                            <option value="Administration">Administration</option>
+                                            <option value="Transport">Transport</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="delivery-deadline">Delivery Deadline *</label>
+                                        <input type="date" id="delivery-deadline" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="budget-code">Budget Code *</label>
+                                        <input type="text" id="budget-code" placeholder="Enter budget code" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="justification">Justification *</label>
+                                    <textarea id="justification" placeholder="Explain why these items are needed and how they will be used..." required></textarea>
+                                </div>
+                                
+                                <h3><i class="fas fa-boxes"></i> Request Items</h3>
+                                <div id="items-container">
+                                    <div class="item-row">
+                                        <input type="text" placeholder="Item Description" class="item-description" required>
+                                        <input type="text" placeholder="Specifications" class="item-specs">
+                                        <input type="number" placeholder="Quantity" class="item-quantity" min="1" value="1" required>
+                                        <input type="number" placeholder="Unit Price ($)" class="item-price" min="0" step="0.01" required>
+                                        <button type="button" class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" class="btn btn-warning" id="add-item"><i class="fas fa-plus"></i> Add Another Item</button>
+                                
+                                <div class="form-group" style="margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px;">
+                                    <label style="font-size: 1.2rem;">Total Estimated Cost: $<span id="total-cost">0.00</span></label>
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <button type="submit" class="btn btn-success"><i class="fas fa-paper-plane"></i> Submit Request</button>
+                                    <button type="button" class="btn btn-secondary" id="save-draft"><i class="fas fa-save"></i> Save as Draft</button>
+                                    <button type="reset" class="btn btn-outline"><i class="fas fa-times"></i> Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- My Requests Tab -->
+                    <div id="my-requests" class="tab-content">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-list-alt"></i> My Purchase Requests</h1>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Title</th>
+                                            <th>Department</th>
+                                            <th>Total Cost</th>
+                                            <th>Status</th>
+                                            <th>Date Submitted</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="my-requests-table">
+                                        <tr>
+                                            <td colspan="7" class="empty-state">
+                                                <i class="fas fa-inbox"></i>
+                                                <p>No purchase requests found</p>
+                                                <button class="btn btn-primary" onclick="switchTab('create-request')">
+                                                    <i class="fas fa-plus"></i> Create Your First Request
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Approvals Tab -->
+                    <div id="approvals" class="tab-content">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-check-double"></i> Pending Approvals</h1>
+                            <div class="page-actions">
+                                <button class="btn btn-primary" id="refresh-approvals"><i class="fas fa-sync-alt"></i> Refresh</button>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Title</th>
+                                            <th>Department</th>
+                                            <th>Requested By</th>
+                                            <th>Total Cost</th>
+                                            <th>Current Stage</th>
+                                            <th>Date Submitted</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="approvals-table">
+                                        <tr>
+                                            <td colspan="8" class="empty-state">
+                                                <i class="fas fa-check-circle"></i>
+                                                <p>No pending approvals at your level</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Procurement Tab -->
+                    <div id="procurement" class="tab-content">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-file-invoice-dollar"></i> Procurement Management</h1>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="table-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Request ID</th>
+                                            <th>Title</th>
+                                            <th>Department</th>
+                                            <th>Total Cost</th>
+                                            <th>Approval Date</th>
+                                            <th>Procurement Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="procurement-table">
+                                        <tr>
+                                            <td colspan="7" class="empty-state">
+                                                <i class="fas fa-shopping-cart"></i>
+                                                <p>No requests in procurement stage</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reports Tab -->
+                    <div id="reports" class="tab-content">
+                        <div class="page-header">
+                            <h1 class="page-title"><i class="fas fa-chart-bar"></i> Procurement Reports</h1>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="empty-state">
+                                <i class="fas fa-chart-bar"></i>
+                                <p>No data available for reports</p>
+                                <p class="text-muted">Reports will be generated once procurement data is available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Notification Element -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Approval Modal -->
+    <div id="approval-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Review Purchase Request</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div id="approval-details">
+                <!-- Approval details will be populated by JavaScript -->
+            </div>
+            
+            <div class="action-buttons">
+                <button id="approve-request" class="btn btn-success"><i class="fas fa-check"></i> Approve</button>
+                <button id="reject-request" class="btn btn-danger"><i class="fas fa-times"></i> Reject</button>
+                <button id="request-more-info" class="btn btn-warning"><i class="fas fa-info-circle"></i> Request More Info</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quotation Modal -->
+    <div id="quotation-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Manage Quotations</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div id="quotation-details">
+                <!-- Quotation details will be populated by JavaScript -->
+            </div>
+            
+            <h4>Add New Quotation</h4>
+            <div class="card">
+                <form id="quotation-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="supplier-name">Supplier Name *</label>
+                            <input type="text" id="supplier-name" placeholder="Enter supplier name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="quotation-amount">Quotation Amount ($) *</label>
+                            <input type="number" id="quotation-amount" placeholder="Enter amount" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="delivery-days">Delivery Time (Days) *</label>
+                            <input type="number" id="delivery-days" placeholder="Enter delivery days" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="validity-date">Validity Date *</label>
+                            <input type="date" id="validity-date" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quotation-terms">Terms & Conditions</label>
+                        <textarea id="quotation-terms" placeholder="Enter terms and conditions"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add Quotation</button>
+                </form>
+            </div>
+            
+            <h4>Quotation Comparison</h4>
+            <div id="comparison-info" class="card" style="background: #f8f9fa; display: none;">
+                <p><i class="fas fa-info-circle"></i> <strong>Comparison Guide:</strong></p>
+                <p>• <span class="best-badge">Best Price</span> - Lowest quotation amount</p>
+                <p>• <span class="comparison-badge" style="background: var(--info);">Best Delivery</span> - Fastest delivery time</p>
+            </div>
+            <div class="quotation-comparison" id="quotation-comparison">
+                <div class="empty-state">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <p>No quotations added yet</p>
+                    <p class="text-muted">Add at least 3 quotations for comparison</p>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="select-quotation" class="btn btn-success" disabled><i class="fas fa-check"></i> Select Quotation</button>
+                <button class="btn btn-secondary close-modal"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div id="invoice-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Pro Forma Invoice</h3>
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="print-invoice"><i class="fas fa-print"></i> Print</button>
+                    <button class="btn btn-success" id="download-invoice"><i class="fas fa-download"></i> Download PDF</button>
+                    <button class="close-modal">&times;</button>
+                </div>
+            </div>
+            
+            <div id="invoice-content">
+                <!-- Invoice content will be populated by JavaScript -->
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary close-modal"><i class="fas fa-times"></i> Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRV Modal -->
+    <div id="grv-modal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Goods Received Voucher</h3>
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="print-grv"><i class="fas fa-print"></i> Print GRV</button>
+                    <button class="btn btn-success" id="complete-grv"><i class="fas fa-check"></i> Complete GRV</button>
+                    <button class="close-modal">&times;</button>
+                </div>
+            </div>
+            
+            <div id="grv-content">
+                <!-- GRV content will be populated by JavaScript -->
+            </div>
+            
+            <h4>Receive Goods</h4>
+            <div class="card">
+                <form id="grv-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="delivery-date">Delivery Date *</label>
+                            <input type="date" id="delivery-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="received-by">Received By *</label>
+                            <input type="text" id="received-by" placeholder="Person who received goods" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="delivery-note">Delivery Note Number</label>
+                            <input type="text" id="delivery-note" placeholder="Supplier delivery note number">
+                        </div>
+                        <div class="form-group">
+                            <label for="condition">Overall Condition</label>
+                            <select id="condition">
+                                <option value="Good">Good</option>
+                                <option value="Satisfactory">Satisfactory</option>
+                                <option value="Damaged">Damaged</option>
+                                <option value="Incomplete">Incomplete</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <h5>Item Receipt Details</h5>
+                    <div id="grv-items-container">
+                        <!-- GRV items will be populated dynamically -->
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Save GRV</button>
+                        <button type="button" class="btn btn-secondary close-modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User database for JSC Organization
+        const users = [
+            { username: "it_dept", password: "it123", name: "IT Department", department: "IT", role: "Requester" },
+            { username: "admin_dept", password: "admin123", name: "Administration", department: "Administration", role: "Requester" },
+            { username: "transport_dept", password: "transport123", name: "Transport Department", department: "Transport", role: "Requester" },
+            { username: "jsc_admin", password: "admin123", name: "JSC Administrator", department: "Administration", role: "Administrator" },
+            { username: "provincial_head", password: "province123", name: "Provincial Head", department: "Provincial Office", role: "Provincial Head" },
+            { username: "jsc_procurement", password: "procurement123", name: "JSC Procurement", department: "Procurement", role: "Procurement Officer" },
+            { username: "jsc_headoffice", password: "headoffice123", name: "JSC Head Office", department: "Head Office", role: "Head Office" }
+        ];
+
+        // Current user session
+        let currentUser = null;
+
+        // Initialize empty data
+        let procurementData = {
+            requests: [],
+            quotations: {}
+        };
+
+        // GRV Data Structure
+        let grvData = {};
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is already logged in (from session storage)
+            const savedUser = sessionStorage.getItem('jscCurrentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            } else {
+                showLoginPage();
+            }
+            
+            // Load data from localStorage
+            const savedData = localStorage.getItem('jscProcurementData');
+            if (savedData) {
+                procurementData = JSON.parse(savedData);
+            }
+            
+            // Load GRV data from localStorage
+            const savedGRVData = localStorage.getItem('jscGRVData');
+            if (savedGRVData) {
+                grvData = JSON.parse(savedGRVData);
+            }
+            
+            setupLoginForm();
+            setupLogoutButton();
+            initializeEventListeners();
+        });
+
+        function setupLoginForm() {
+            const loginForm = document.getElementById('login-form');
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleLogin();
+            });
+        }
+
+        function setupLogoutButton() {
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                handleLogout();
+            });
+        }
+
+        function initializeEventListeners() {
+            // Menu item clicks
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+            
+            // Form submissions
+            document.getElementById('purchase-request-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitPurchaseRequest();
+            });
+            
+            document.getElementById('quotation-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addQuotation();
+            });
+
+            // GRV form submission
+            document.getElementById('grv-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const requestId = document.getElementById('complete-grv').getAttribute('data-request-id');
+                if (requestId) {
+                    saveGRV(requestId);
+                } else {
+                    showNotification('No request selected for GRV', 'error');
+                }
+            });
+            
+            // Button clicks
+            document.getElementById('add-item').addEventListener('click', addItemRow);
+            document.getElementById('refresh-dashboard').addEventListener('click', loadDashboard);
+            document.getElementById('refresh-approvals').addEventListener('click', loadApprovals);
+            document.getElementById('save-draft').addEventListener('click', saveAsDraft);
+            
+            // GRV button clicks
+            document.getElementById('complete-grv').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                if (requestId) {
+                    completeGRV(requestId);
+                } else {
+                    showNotification('No request selected for GRV completion', 'error');
+                }
+            });
+            
+            document.getElementById('print-grv').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                if (requestId) {
+                    printGRV(requestId);
+                } else {
+                    showNotification('No request selected for GRV printing', 'error');
+                }
+            });
+            
+            // Modal close buttons
+            document.querySelectorAll('.close-modal').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
+                });
+            });
+            
+            // Calculate total cost when item details change
+            document.getElementById('items-container').addEventListener('input', calculateTotalCost);
+            
+            // Set current date for delivery deadline
+            const today = new Date();
+            const nextWeek = new Date(today);
+            nextWeek.setDate(today.getDate() + 7);
+            document.getElementById('delivery-deadline').valueAsDate = nextWeek;
+            
+            // Set validity date to next month
+            const nextMonth = new Date(today);
+            nextMonth.setMonth(today.getMonth() + 1);
+            document.getElementById('validity-date').valueAsDate = nextMonth;
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const department = document.getElementById('department').value;
+            
+            // Clear previous error messages
+            clearErrorMessages();
+            
+            // Validate inputs
+            let hasError = false;
+            
+            if (!username) {
+                showError('username-error', 'Username is required');
+                hasError = true;
+            }
+            
+            if (!password) {
+                showError('password-error', 'Password is required');
+                hasError = true;
+            }
+            
+            if (!department) {
+                showError('department-error', 'Please select a department');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Find user in database
+            const user = users.find(u => 
+                u.username === username && 
+                u.password === password && 
+                u.department === department
+            );
+            
+            if (user) {
+                // Successful login
+                currentUser = user;
+                
+                // Save to session storage
+                sessionStorage.setItem('jscCurrentUser', JSON.stringify(user));
+                
+                showMainApp();
+                showNotification(`Welcome to JSC eProcurement System!`, 'success');
+            } else {
+                showError('login-error', 'Invalid username, password, or department selection');
+            }
+        }
+
+        function clearErrorMessages() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.innerHTML = '';
+            });
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.innerHTML = message;
+            errorElement.style.display = 'block';
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            sessionStorage.removeItem('jscCurrentUser');
+            showLoginPage();
+            showNotification('You have been logged out successfully.', 'success');
+        }
+
+        function showLoginPage() {
+            document.getElementById('login-page').style.display = 'flex';
+            document.getElementById('main-app').style.display = 'none';
+            
+            // Clear login form
+            document.getElementById('login-form').reset();
+            clearErrorMessages();
+        }
+
+        function showMainApp() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            
+            // Update user info in header
+            document.getElementById('user-display-name').textContent = currentUser.name;
+            document.getElementById('user-role').textContent = currentUser.role;
+            document.getElementById('user-avatar').textContent = 
+                currentUser.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+            
+            // Initialize the application
+            initializeApp();
+        }
+
+        function initializeApp() {
+            // Load all data
+            loadDashboard();
+            loadMyRequests();
+            loadApprovals();
+            loadProcurement();
+            
+            // Set up approval button handlers
+            document.getElementById('approve-request').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                approveRequest(requestId);
+            });
+            
+            document.getElementById('reject-request').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                rejectRequest(requestId);
+            });
+            
+            document.getElementById('request-more-info').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                requestMoreInfo(requestId);
+            });
+            
+            document.getElementById('select-quotation').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-request-id');
+                selectQuotation(requestId);
+            });
+        }
+
+        function switchTab(tabId) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            document.querySelector(`.menu-item[data-tab="${tabId}"]`).classList.add('active');
+            
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Refresh data for the tab
+            if (tabId === 'dashboard') {
+                loadDashboard();
+            } else if (tabId === 'my-requests') {
+                loadMyRequests();
+            } else if (tabId === 'approvals') {
+                loadApprovals();
+            } else if (tabId === 'procurement') {
+                loadProcurement();
+            }
+        }
+
+        function loadDashboard() {
+            // Update statistics
+            document.getElementById('total-requests').textContent = procurementData.requests.length;
+            document.getElementById('pending-approvals').textContent = procurementData.requests.filter(r => 
+                r.status === 'submitted' || r.status === 'review').length;
+            document.getElementById('in-procurement').textContent = procurementData.requests.filter(r => 
+                r.status === 'procurement').length;
+            document.getElementById('completed-month').textContent = procurementData.requests.filter(r => 
+                r.status === 'completed').length;
+            
+            // Update approval badge
+            const pendingApprovals = procurementData.requests.filter(request => {
+                if (request.status !== 'submitted' && request.status !== 'review') return false;
+                
+                if (currentUser.role === 'Administrator' && request.currentStage === 'Administrator') {
+                    return true;
+                } else if (currentUser.role === 'Provincial Head' && request.currentStage === 'Provincial Head') {
+                    return true;
+                } else if (currentUser.role === 'Head Office' && request.currentStage === 'Head Office') {
+                    return true;
+                }
+                
+                return false;
+            }).length;
+            
+            document.getElementById('approval-badge').textContent = pendingApprovals;
+            
+            // Load recent activity
+            const recentActivityTable = document.getElementById('recent-activity-table');
+            
+            if (procurementData.requests.length === 0) {
+                recentActivityTable.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No recent activity</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                recentActivityTable.innerHTML = '';
+                // Show latest 5 requests
+                const recentRequests = [...procurementData.requests]
+                    .sort((a, b) => new Date(b.dateSubmitted) - new Date(a.dateSubmitted))
+                    .slice(0, 5);
+                
+                recentRequests.forEach(request => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${request.id}</td>
+                        <td>${request.department}</td>
+                        <td>${request.title}</td>
+                        <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
+                        <td>${formatDate(request.dateSubmitted)}</td>
+                    `;
+                    recentActivityTable.appendChild(row);
+                });
+            }
+        }
+
+        function loadMyRequests() {
+            const myRequestsTable = document.getElementById('my-requests-table');
+            
+            // Filter requests by current user
+            const userRequests = procurementData.requests.filter(request => 
+                request.requestedBy === currentUser.name);
+            
+            if (userRequests.length === 0) {
+                myRequestsTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No purchase requests found</p>
+                            <button class="btn btn-primary" onclick="switchTab('create-request')">
+                                <i class="fas fa-plus"></i> Create Your First Request
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                myRequestsTable.innerHTML = '';
+                userRequests.forEach(request => {
+                    const hasGRV = grvData[request.id];
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${request.id}</td>
+                        <td>${request.title}</td>
+                        <td>${request.department}</td>
+                        <td>$${request.totalCost.toFixed(2)}</td>
+                        <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
+                        <td>${formatDate(request.dateSubmitted)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary view-request" data-id="${request.id}">View</button>
+                            <button class="btn btn-sm btn-info generate-invoice" data-id="${request.id}">Invoice</button>
+                            ${hasGRV ? `<button class="btn btn-sm btn-success view-grv" data-id="${request.id}">View GRV</button>` : ''}
+                            ${request.status === 'draft' ? '<button class="btn btn-sm btn-warning edit-request" data-id="${request.id}">Edit</button>' : ''}
+                        </td>
+                    `;
+                    myRequestsTable.appendChild(row);
+                });
+                
+                // Add event listeners to view buttons
+                document.querySelectorAll('.view-request').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const requestId = this.getAttribute('data-id');
+                        viewRequest(requestId);
+                    });
+                });
+                
+                // Add event listeners to invoice buttons
+                document.querySelectorAll('.generate-invoice').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const requestId = this.getAttribute('data-id');
+                        generateInvoice(requestId);
+                    });
+                });
+
+                // Add event listeners to GRV buttons
+                document.querySelectorAll('.view-grv').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const requestId = this.getAttribute('data-id');
+                        viewGRVHistory(requestId);
+                    });
+                });
+            }
+        }
+
+        function loadApprovals() {
+            const approvalsTable = document.getElementById('approvals-table');
+            
+            // Filter requests that are in approval stages and match user's role
+            const approvalRequests = procurementData.requests.filter(request => {
+                if (request.status !== 'submitted' && request.status !== 'review') return false;
+                
+                // Check if current user should see this request based on their role
+                if (currentUser.role === 'Administrator' && request.currentStage === 'Administrator') {
+                    return true;
+                } else if (currentUser.role === 'Provincial Head' && request.currentStage === 'Provincial Head') {
+                    return true;
+                } else if (currentUser.role === 'Head Office' && request.currentStage === 'Head Office') {
+                    return true;
+                }
+                
+                return false;
+            });
+            
+            if (approvalRequests.length === 0) {
+                approvalsTable.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-check-circle"></i>
+                            <p>No pending approvals at your level</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                approvalsTable.innerHTML = '';
+                approvalRequests.forEach(request => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${request.id}</td>
+                        <td>${request.title}</td>
+                        <td>${request.department}</td>
+                        <td>${request.requestedBy}</td>
+                        <td>$${request.totalCost.toFixed(2)}</td>
+                        <td>${request.currentStage}</td>
+                        <td>${formatDate(request.dateSubmitted)}</td>
+                        <td><button class="btn btn-sm btn-primary review-request" data-id="${request.id}">Review</button></td>
+                    `;
+                    approvalsTable.appendChild(row);
+                });
+                
+                // Add event listeners to review buttons
+                document.querySelectorAll('.review-request').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const requestId = this.getAttribute('data-id');
+                        openApprovalModal(requestId);
+                    });
+                });
+            }
+        }
+
+        function loadProcurement() {
+            const procurementTable = document.getElementById('procurement-table');
+            
+            // Filter requests that are in procurement stage (only visible to procurement officers)
+            if (currentUser.role === 'Procurement Officer') {
+                const procurementRequests = procurementData.requests.filter(request => 
+                    request.status === 'procurement' || request.status === 'completed');
+                
+                if (procurementRequests.length === 0) {
+                    procurementTable.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>No requests in procurement stage</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    procurementTable.innerHTML = '';
+                    procurementRequests.forEach(request => {
+                        const hasGRV = grvData[request.id];
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${request.id}</td>
+                            <td>${request.title}</td>
+                            <td>${request.department}</td>
+                            <td>$${request.totalCost.toFixed(2)}</td>
+                            <td>${formatDate(request.approvalDate || request.dateSubmitted)}</td>
+                            <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary manage-procurement" data-id="${request.id}">Manage</button>
+                                ${request.status === 'procurement' || (request.status === 'completed' && !hasGRV) ? 
+                                  `<button class="btn btn-sm btn-warning create-grv" data-id="${request.id}">Create GRV</button>` : ''}
+                                ${hasGRV ? `<button class="btn btn-sm btn-info view-grv" data-id="${request.id}">View GRV</button>` : ''}
+                            </td>
+                        `;
+                        procurementTable.appendChild(row);
+                    });
+                    
+                    // Add event listeners to manage buttons
+                    document.querySelectorAll('.manage-procurement').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const requestId = this.getAttribute('data-id');
+                            openQuotationModal(requestId);
+                        });
+                    });
+                    
+                    // Add event listeners to GRV buttons
+                    document.querySelectorAll('.create-grv').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const requestId = this.getAttribute('data-id');
+                            openGRVModal(requestId);
+                        });
+                    });
+                    
+                    document.querySelectorAll('.view-grv').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const requestId = this.getAttribute('data-id');
+                            viewGRVHistory(requestId);
+                        });
+                    });
+                }
+            } else {
+                procurementTable.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-lock"></i>
+                            <p>Procurement management is only available to Procurement Officers</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function addItemRow() {
+            const container = document.getElementById('items-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <input type="text" placeholder="Item Description" class="item-description" required>
+                <input type="text" placeholder="Specifications" class="item-specs">
+                <input type="number" placeholder="Quantity" class="item-quantity" min="1" value="1" required>
+                <input type="number" placeholder="Unit Price ($)" class="item-price" min="0" step="0.01" required>
+                <button type="button" class="btn btn-danger remove-item"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(newRow);
+            
+            // Add event listener to remove button
+            newRow.querySelector('.remove-item').addEventListener('click', function() {
+                container.removeChild(newRow);
+                calculateTotalCost();
+            });
+            
+            // Add event listeners for cost calculation
+            newRow.querySelector('.item-quantity').addEventListener('input', calculateTotalCost);
+            newRow.querySelector('.item-price').addEventListener('input', calculateTotalCost);
+        }
+
+        function calculateTotalCost() {
+            let total = 0;
+            const itemRows = document.querySelectorAll('.item-row');
+            
+            itemRows.forEach(row => {
+                const quantity = parseFloat(row.querySelector('.item-quantity').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                total += quantity * price;
+            });
+            
+            document.getElementById('total-cost').textContent = total.toFixed(2);
+        }
+
+        function submitPurchaseRequest() {
+            // Get form data
+            const title = document.getElementById('request-title').value;
+            const department = document.getElementById('pr-department').value;
+            const budgetCode = document.getElementById('budget-code').value;
+            const justification = document.getElementById('justification').value;
+            const deliveryDeadline = document.getElementById('delivery-deadline').value;
+            const totalCost = parseFloat(document.getElementById('total-cost').textContent);
+            
+            // Validate items
+            const items = [];
+            let hasItemErrors = false;
+            
+            document.querySelectorAll('.item-row').forEach(row => {
+                const description = row.querySelector('.item-description').value;
+                const specs = row.querySelector('.item-specs').value;
+                const quantity = parseInt(row.querySelector('.item-quantity').value);
+                const price = parseFloat(row.querySelector('.item-price').value);
+                
+                if (!description) {
+                    showNotification('All items must have a description', 'error');
+                    hasItemErrors = true;
+                    return;
+                }
+                
+                items.push({
+                    description,
+                    specs,
+                    quantity,
+                    price
+                });
+            });
+            
+            if (hasItemErrors) return;
+            
+            // Create a new request object
+            const newRequest = {
+                id: "JSC-PR-" + new Date().getFullYear() + "-" + (procurementData.requests.length + 1).toString().padStart(3, '0'),
+                title: title,
+                department: department,
+                requestedBy: currentUser.name,
+                totalCost: totalCost,
+                status: "submitted",
+                dateSubmitted: new Date().toISOString().split('T')[0],
+                currentStage: "Administrator",
+                items: items,
+                justification: justification,
+                budgetCode: budgetCode,
+                deliveryDeadline: deliveryDeadline,
+                approvals: []
+            };
+            
+            // Add to data
+            procurementData.requests.push(newRequest);
+            
+            // Save to localStorage
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            showNotification('Purchase request submitted successfully! Moving to Administrator for approval.', 'success');
+            
+            // Reset form
+            document.getElementById('purchase-request-form').reset();
+            document.getElementById('items-container').innerHTML = '';
+            addItemRow(); // Add one empty item row
+            calculateTotalCost();
+            
+            // Reload data
+            loadDashboard();
+            loadMyRequests();
+            loadApprovals();
+            
+            // Switch to My Requests tab
+            switchTab('my-requests');
+        }
+
+        function saveAsDraft() {
+            showNotification('Purchase request saved as draft', 'info');
+        }
+
+        function openApprovalModal(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            const modal = document.getElementById('approval-modal');
+            const details = document.getElementById('approval-details');
+            
+            // Build approval details HTML
+            let html = `
+                <div class="card">
+                    <h4>Request Details</h4>
+                    <p><strong>Request ID:</strong> ${request.id}</p>
+                    <p><strong>Title:</strong> ${request.title}</p>
+                    <p><strong>Department:</strong> ${request.department}</p>
+                    <p><strong>Requested By:</strong> ${request.requestedBy}</p>
+                    <p><strong>Total Cost:</strong> $${request.totalCost.toFixed(2)}</p>
+                    <p><strong>Budget Code:</strong> ${request.budgetCode}</p>
+                    <p><strong>Delivery Deadline:</strong> ${formatDate(request.deliveryDeadline)}</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Items Requested</h4>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Specifications</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            request.items.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.description}</td>
+                        <td>${item.specs}</td>
+                        <td>${item.quantity}</td>
+                        <td>$${item.price.toFixed(2)}</td>
+                        <td>$${(item.quantity * item.price).toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="card">
+                    <h4>Justification</h4>
+                    <p>${request.justification}</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Approval Workflow</h4>
+                    <div class="workflow-steps">
+            `;
+            
+            // Add workflow steps with new Provincial Head step
+            const steps = [
+                { role: 'Administrator', completed: request.approvals.some(a => a.role === 'Administrator') },
+                { role: 'Provincial Head', completed: request.approvals.some(a => a.role === 'Provincial Head') },
+                { role: 'Head Office', completed: request.approvals.some(a => a.role === 'Head Office') },
+                { role: 'Procurement Officer', completed: request.approvals.some(a => a.role === 'Procurement Officer') }
+            ];
+            
+            steps.forEach(step => {
+                const approval = request.approvals.find(a => a.role === step.role);
+                const stepClass = step.completed ? 'step-completed' : (step.role === request.currentStage ? 'step-active' : '');
+                
+                html += `
+                    <div class="workflow-step ${stepClass}">
+                        <div class="step-number">${steps.indexOf(step) + 1}</div>
+                        <div class="step-label">${step.role}</div>
+                        ${step.completed ? `<div style="font-size: 0.8rem; margin-top: 5px;">Approved</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `</div></div>`;
+            
+            details.innerHTML = html;
+            
+            // Set up approval button handlers
+            document.getElementById('approve-request').setAttribute('data-request-id', requestId);
+            document.getElementById('reject-request').setAttribute('data-request-id', requestId);
+            document.getElementById('request-more-info').setAttribute('data-request-id', requestId);
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+
+        function approveRequest(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            // Add approval record
+            request.approvals.push({
+                role: currentUser.role,
+                status: "approved",
+                date: new Date().toISOString().split('T')[0],
+                comments: "Approved by " + currentUser.name,
+                approvedBy: currentUser.name
+            });
+            
+            // Update request status and stage based on current approver
+            if (currentUser.role === 'Administrator') {
+                request.currentStage = 'Provincial Head';
+                request.status = 'review';
+                showNotification(`Request ${requestId} approved! Moving to Provincial Head for review.`, 'success');
+            } else if (currentUser.role === 'Provincial Head') {
+                request.currentStage = 'Head Office';
+                request.status = 'review';
+                showNotification(`Request ${requestId} approved! Moving to Head Office for final approval.`, 'success');
+            } else if (currentUser.role === 'Head Office') {
+                request.currentStage = 'Procurement Officer';
+                request.status = 'procurement';
+                request.approvalDate = new Date().toISOString().split('T')[0];
+                showNotification(`Request ${requestId} fully approved! Moving to procurement phase.`, 'success');
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            // Close modal
+            document.getElementById('approval-modal').style.display = 'none';
+            
+            // Reload data
+            loadDashboard();
+            loadMyRequests();
+            loadApprovals();
+            loadProcurement();
+        }
+
+        function rejectRequest(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            // Update request status
+            request.status = 'rejected';
+            request.approvals.push({
+                role: currentUser.role,
+                status: "rejected",
+                date: new Date().toISOString().split('T')[0],
+                comments: "Rejected by " + currentUser.name,
+                approvedBy: currentUser.name
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            showNotification(`Request ${requestId} has been rejected by ${currentUser.role}`, 'error');
+            
+            // Close modal
+            document.getElementById('approval-modal').style.display = 'none';
+            
+            // Reload data
+            loadDashboard();
+            loadMyRequests();
+            loadApprovals();
+        }
+
+        function requestMoreInfo(requestId) {
+            const info = prompt('What additional information do you need from the requester?');
+            if (info) {
+                showNotification('Request for more information sent to requester', 'warning');
+                document.getElementById('approval-modal').style.display = 'none';
+            }
+        }
+
+        function openQuotationModal(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            const modal = document.getElementById('quotation-modal');
+            const details = document.getElementById('quotation-details');
+            const comparison = document.getElementById('quotation-comparison');
+            const comparisonInfo = document.getElementById('comparison-info');
+
+            modal.setAttribute('data-current-request', requestId);
+            
+            // Build request details
+            details.innerHTML = `
+                <div class="card">
+                    <h4>Request Details</h4>
+                    <p><strong>Request ID:</strong> ${request.id}</p>
+                    <p><strong>Title:</strong> ${request.title}</p>
+                    <p><strong>Department:</strong> ${request.department}</p>
+                    <p><strong>Total Budget:</strong> $${request.totalCost.toFixed(2)}</p>
+                    <p><strong>Delivery Deadline:</strong> ${formatDate(request.deliveryDeadline)}</p>
+                </div>
+            `;
+            
+            // Initialize quotations for this request if not exists
+            if (!procurementData.quotations[requestId]) {
+                procurementData.quotations[requestId] = [];
+            }
+            
+            // Build quotation comparison
+            comparison.innerHTML = '';
+            
+            if (procurementData.quotations[requestId].length === 0) {
+                comparison.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <p>No quotations added yet</p>
+                        <p class="text-muted">Add at least 3 quotations for comparison</p>
+                    </div>
+                `;
+                comparisonInfo.style.display = 'none';
+            } else {
+                comparisonInfo.style.display = 'block';
+                
+                // Find best price and best delivery
+                const quotations = procurementData.quotations[requestId];
+                const bestPrice = Math.min(...quotations.map(q => q.amount));
+                const bestDelivery = Math.min(...quotations.map(q => q.deliveryDays));
+                
+                quotations.forEach((quote, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'quotation-card';
+                    
+                    // Add classes for best price and best delivery
+                    if (quote.amount === bestPrice) {
+                        card.classList.add('best-price');
+                    }
+                    if (quote.deliveryDays === bestDelivery) {
+                        card.classList.add('best-delivery');
+                    }
+                    
+                    if (quote.selected) {
+                        card.classList.add('selected');
+                    }
+                    
+                    card.innerHTML = `
+                        <h4>${quote.supplierName} 
+                            ${quote.amount === bestPrice ? '<span class="best-badge">Best Price</span>' : ''}
+                            ${quote.deliveryDays === bestDelivery ? '<span class="comparison-badge">Best Delivery</span>' : ''}
+                        </h4>
+                        <div class="quotation-details">
+                            <div><strong>Amount:</strong> $${quote.amount.toFixed(2)}</div>
+                            <div><strong>Delivery:</strong> ${quote.deliveryDays} days</div>
+                            <div><strong>Validity:</strong> ${formatDate(quote.validityDate)}</div>
+                            <div><strong>Terms:</strong> ${quote.terms.substring(0, 50)}${quote.terms.length > 50 ? '...' : ''}</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary select-quote" data-request="${requestId}" data-index="${index}">
+                            ${quote.selected ? '<i class="fas fa-check"></i> Selected' : 'Select'}
+                        </button>
+                    `;
+                    comparison.appendChild(card);
+                });
+            }
+            
+            // Set up select quotation buttons
+            document.querySelectorAll('.select-quote').forEach(button => {
+                button.addEventListener('click', function() {
+                    const reqId = this.getAttribute('data-request');
+                    const index = this.getAttribute('data-index');
+                    
+                    // Deselect all quotations for this request
+                    procurementData.quotations[reqId].forEach(quote => {
+                        quote.selected = false;
+                    });
+                    
+                    // Select this quotation
+                    procurementData.quotations[reqId][index].selected = true;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+                    
+                    // Refresh the modal
+                    openQuotationModal(requestId);
+                });
+            });
+            
+            // Set up select quotation button
+            const selectedQuote = procurementData.quotations[requestId].find(q => q.selected);
+            if (selectedQuote) {
+                document.getElementById('select-quotation').disabled = false;
+                document.getElementById('select-quotation').setAttribute('data-request-id', requestId);
+            } else {
+                document.getElementById('select-quotation').disabled = true;
+            }
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+
+        function addQuotation() {
+            const supplierName = document.getElementById('supplier-name').value;
+            const amount = parseFloat(document.getElementById('quotation-amount').value);
+            const deliveryDays = parseInt(document.getElementById('delivery-days').value);
+            const validityDate = document.getElementById('validity-date').value;
+            const terms = document.getElementById('quotation-terms').value;
+            
+            // Validate required fields
+            if (!supplierName || !amount || !deliveryDays || !validityDate) {
+                showNotification('Please fill all required fields', 'error');
+                return;
+            }
+            
+            // Get the current request ID from the modal's data attribute
+            const modal = document.getElementById('quotation-modal');
+            const requestId = modal.getAttribute('data-current-request');
+            
+            if (!requestId) {
+                showNotification('Cannot add quotation. No request selected. Please try again.', 'error');
+                return;
+            }
+            
+            // Create quotation object
+            const quotation = {
+                supplierName,
+                amount,
+                deliveryDays,
+                validityDate,
+                terms,
+                selected: false,
+                addedDate: new Date().toISOString().split('T')[0]
+            };
+            
+            // Initialize quotations for this request if not exists
+            if (!procurementData.quotations[requestId]) {
+                procurementData.quotations[requestId] = [];
+            }
+            
+            // Add to quotations
+            procurementData.quotations[requestId].push(quotation);
+            
+            // Save to localStorage
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            // Reset form
+            document.getElementById('quotation-form').reset();
+            
+            // Refresh the modal to show the new quotation
+            openQuotationModal(requestId);
+            
+            showNotification('Quotation added successfully!', 'success');
+        }
+
+        function selectQuotation(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            const selectedQuote = procurementData.quotations[requestId].find(q => q.selected);
+            if (!selectedQuote) {
+                showNotification('Please select a quotation first', 'error');
+                return;
+            }
+            
+            // Update request status
+            request.status = 'completed';
+            request.selectedSupplier = selectedQuote.supplierName;
+            request.finalAmount = selectedQuote.amount;
+            request.completionDate = new Date().toISOString().split('T')[0];
+            
+            // Save to localStorage
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            showNotification(`Quotation from ${selectedQuote.supplierName} selected for ${requestId}. Procurement completed!`, 'success');
+            
+            // Close modal
+            document.getElementById('quotation-modal').style.display = 'none';
+            
+            // Reload data
+            loadDashboard();
+            loadProcurement();
+        }
+
+        function viewRequest(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (request) {
+                showNotification(`Viewing details for request ${requestId}`, 'info');
+            }
+        }
+
+        function generateInvoice(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            const modal = document.getElementById('invoice-modal');
+            const content = document.getElementById('invoice-content');
+            
+            // Build invoice HTML
+            const invoiceHTML = `
+                <div class="card" id="printable-invoice">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--primary);">
+                        <div>
+                            <h2 style="color: var(--primary); margin: 0;">Judicial Service Commissions</h2>
+                            <p style="margin: 5px 0; color: var(--dark);">Procurement Department</p>
+                            <p style="margin: 0; color: var(--dark);">Pro Forma Invoice</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <h3 style="margin: 0; color: var(--primary);">${request.id}</h3>
+                            <p style="margin: 5px 0;">Date: ${formatDate(new Date())}</p>
+                            <p style="margin: 0;">Status: <span class="status ${request.status}">${getStatusText(request.status)}</span></p>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <h4>Request Details</h4>
+                            <p><strong>Department:</strong> ${request.department}</p>
+                            <p><strong>Requested By:</strong> ${request.requestedBy}</p>
+                            <p><strong>Budget Code:</strong> ${request.budgetCode}</p>
+                        </div>
+                        <div>
+                            <h4>Delivery Information</h4>
+                            <p><strong>Delivery Deadline:</strong> ${formatDate(request.deliveryDeadline)}</p>
+                            <p><strong>Selected Supplier:</strong> ${request.selectedSupplier || 'Pending Selection'}</p>
+                        </div>
+                    </div>
+                    
+                    <h4>Items Requested</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background: var(--light);">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--primary);">Description</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid var(--primary);">Specifications</th>
+                                <th style="padding: 12px; text-align: center; border-bottom: 2px solid var(--primary);">Qty</th>
+                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--primary);">Unit Price</th>
+                                <th style="padding: 12px; text-align: right; border-bottom: 2px solid var(--primary);">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${request.items.map(item => `
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.description}</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.specs}</td>
+                                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #eee;">${item.quantity}</td>
+                                    <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee;">$${item.price.toFixed(2)}</td>
+                                    <td style="padding: 10px; text-align: right; border-bottom: 1px solid #eee;">$${(item.quantity * item.price).toFixed(2)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr style="background: #f8f9fa;">
+                                <td colspan="4" style="padding: 12px; text-align: right; font-weight: bold; border-top: 2px solid var(--primary);">Total Amount:</td>
+                                <td style="padding: 12px; text-align: right; font-weight: bold; border-top: 2px solid var(--primary);">$${request.totalCost.toFixed(2)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <h4>Justification</h4>
+                            <p style="background: #f8f9fa; padding: 15px; border-radius: 5px;">${request.justification}</p>
+                        </div>
+                        <div>
+                            <h4>Approval Workflow</h4>
+                            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px;">
+                                ${request.approvals.map(approval => `
+                                    <p style="margin: 5px 0;">
+                                        <strong>${approval.role}:</strong> 
+                                        <span class="status ${approval.status}">${approval.status}</span>
+                                        on ${formatDate(approval.date)}
+                                    </p>
+                                `).join('')}
+                                ${request.approvals.length === 0 ? '<p>Pending approval</p>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--primary);">
+                        <p style="text-align: center; color: var(--dark); font-size: 0.9em;">
+                            <strong>Terms & Conditions:</strong><br>
+                            This is a pro forma invoice for internal procurement purposes.<br>
+                            Prices are subject to change based on final supplier quotations.<br>
+                            Delivery timelines may vary based on supplier availability.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            content.innerHTML = invoiceHTML;
+            
+            // Set up print functionality
+            document.getElementById('print-invoice').addEventListener('click', function() {
+                const printContent = document.getElementById('printable-invoice').innerHTML;
+                const originalContent = document.body.innerHTML;
+                
+                document.body.innerHTML = printContent;
+                window.print();
+                document.body.innerHTML = originalContent;
+                location.reload(); // Reload to restore functionality
+            });
+            
+            // Set up download functionality (simplified - in real system would generate PDF)
+            document.getElementById('download-invoice').addEventListener('click', function() {
+                showNotification('PDF download functionality would be implemented in production', 'info');
+            });
+            
+            // Show the modal
+            modal.style.display = 'flex';
+        }
+
+        // ==================== GRV FUNCTIONS ====================
+
+        // Open GRV Modal
+        function openGRVModal(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (!request) return;
+            
+            const modal = document.getElementById('grv-modal');
+            const content = document.getElementById('grv-content');
+            const itemsContainer = document.getElementById('grv-items-container');
+            
+            // Check if GRV already exists
+            const existingGRV = grvData[requestId];
+            
+            // Build GRV header
+            content.innerHTML = `
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--primary);">
+                        <div>
+                            <h3 style="color: var(--primary); margin: 0;">GOODS RECEIVED VOUCHER</h3>
+                            <p style="margin: 5px 0; color: var(--dark);">JSC Organization - Stores Department</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <h4 style="margin: 0; color: var(--primary);">GRV-${request.id}</h4>
+                            <p style="margin: 5px 0;">Based on: ${request.id}</p>
+                            <p style="margin: 0;">Supplier: ${request.selectedSupplier || 'Not Selected'}</p>
+                            ${existingGRV ? `<p style="margin: 5px 0; color: var(--success);"><strong>Status: ${existingGRV.status.toUpperCase()}</strong></p>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Build GRV items form
+            itemsContainer.innerHTML = '';
+            request.items.forEach((item, index) => {
+                const existingItem = existingGRV ? existingGRV.items[index] : null;
+                
+                const grvItem = document.createElement('div');
+                grvItem.className = 'item-row';
+                grvItem.style.display = 'flex';
+                grvItem.style.gap = '10px';
+                grvItem.style.alignItems = 'center';
+                grvItem.style.marginBottom = '10px';
+                grvItem.style.padding = '10px';
+                grvItem.style.backgroundColor = '#f8f9fa';
+                grvItem.style.borderRadius = '5px';
+                grvItem.innerHTML = `
+                    <div style="flex: 2;">
+                        <strong>${item.description}</strong>
+                        <div style="font-size: 0.9em; color: #666;">${item.specs}</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Ordered Qty</label>
+                        <input type="number" value="${item.quantity}" disabled style="background: #f5f5f5; width: 100%; padding: 5px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Received Qty *</label>
+                        <input type="number" class="received-quantity" value="${existingItem ? existingItem.receivedQuantity : item.quantity}" min="0" max="${item.quantity + 10}" required style="width: 100%; padding: 5px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Condition</label>
+                        <select class="item-condition" style="width: 100%; padding: 5px;">
+                            <option value="Good" ${existingItem && existingItem.condition === 'Good' ? 'selected' : ''}>Good</option>
+                            <option value="Damaged" ${existingItem && existingItem.condition === 'Damaged' ? 'selected' : ''}>Damaged</option>
+                            <option value="Short" ${existingItem && existingItem.condition === 'Short' ? 'selected' : ''}>Short Received</option>
+                            <option value="Satisfactory" ${existingItem && existingItem.condition === 'Satisfactory' ? 'selected' : ''}>Satisfactory</option>
+                        </select>
+                    </div>
+                    <div style="flex: 2;">
+                        <label>Remarks</label>
+                        <input type="text" class="item-remarks" placeholder="Any discrepancies or notes" value="${existingItem ? existingItem.remarks : ''}" style="width: 100%; padding: 5px;">
+                    </div>
+                `;
+                itemsContainer.appendChild(grvItem);
+            });
+            
+            // Set form values if GRV exists
+            if (existingGRV) {
+                document.getElementById('delivery-date').value = existingGRV.deliveryDate;
+                document.getElementById('received-by').value = existingGRV.receivedBy;
+                document.getElementById('delivery-note').value = existingGRV.deliveryNote || '';
+                document.getElementById('condition').value = existingGRV.condition;
+                
+                // Disable complete button if already completed
+                if (existingGRV.status === 'completed') {
+                    document.getElementById('complete-grv').disabled = true;
+                    document.getElementById('complete-grv').innerHTML = '<i class="fas fa-check"></i> GRV Completed';
+                } else {
+                    document.getElementById('complete-grv').disabled = false;
+                    document.getElementById('complete-grv').innerHTML = '<i class="fas fa-check"></i> Complete GRV';
+                }
+            } else {
+                // Set today's date as default
+                document.getElementById('delivery-date').valueAsDate = new Date();
+                document.getElementById('complete-grv').disabled = false;
+                document.getElementById('complete-grv').innerHTML = '<i class="fas fa-check"></i> Complete GRV';
+            }
+            
+            // Set up event listeners
+            document.getElementById('complete-grv').setAttribute('data-request-id', requestId);
+            document.getElementById('print-grv').setAttribute('data-request-id', requestId);
+            
+            // Show modal
+            modal.style.display = 'flex';
+        }
+
+        // Save GRV Data
+        function saveGRV(requestId) {
+            console.log('Save GRV called for:', requestId);
+            
+            const deliveryDate = document.getElementById('delivery-date').value;
+            const receivedBy = document.getElementById('received-by').value;
+            const deliveryNote = document.getElementById('delivery-note').value;
+            const condition = document.getElementById('condition').value;
+            
+            // Validate required fields
+            if (!deliveryDate || !receivedBy) {
+                showNotification('Please fill all required fields (Delivery Date and Received By)', 'error');
+                return;
+            }
+            
+            // Collect item data
+            const grvItems = [];
+            let hasErrors = false;
+            
+            const itemRows = document.querySelectorAll('#grv-items-container .item-row');
+            console.log('Found item rows:', itemRows.length);
+            
+            itemRows.forEach((row, index) => {
+                const receivedQtyInput = row.querySelector('.received-quantity');
+                const itemConditionSelect = row.querySelector('.item-condition');
+                const remarksInput = row.querySelector('.item-remarks');
+                
+                if (!receivedQtyInput || !itemConditionSelect) {
+                    console.error('Missing required form elements in row', index);
+                    hasErrors = true;
+                    return;
+                }
+                
+                const receivedQty = parseInt(receivedQtyInput.value);
+                const itemCondition = itemConditionSelect.value;
+                const remarks = remarksInput ? remarksInput.value : '';
+                
+                console.log(`Row ${index}: receivedQty=${receivedQty}, condition=${itemCondition}`);
+                
+                if (isNaN(receivedQty) || receivedQty < 0) {
+                    showNotification(`Please enter valid received quantity for item ${index + 1}`, 'error');
+                    hasErrors = true;
+                    return;
+                }
+                
+                const request = procurementData.requests.find(r => r.id === requestId);
+                if (!request || !request.items[index]) {
+                    console.error('Request or item not found for index', index);
+                    hasErrors = true;
+                    return;
+                }
+                
+                grvItems.push({
+                    description: request.items[index].description,
+                    orderedQuantity: request.items[index].quantity,
+                    receivedQuantity: receivedQty,
+                    condition: itemCondition,
+                    remarks: remarks
+                });
+            });
+            
+            if (hasErrors) {
+                showNotification('Please fix the errors in the GRV form', 'error');
+                return;
+            }
+            
+            if (grvItems.length === 0) {
+                showNotification('No valid items found in GRV', 'error');
+                return;
+            }
+            
+            try {
+                // Save GRV data
+                grvData[requestId] = {
+                    deliveryDate: deliveryDate,
+                    receivedBy: receivedBy,
+                    deliveryNote: deliveryNote,
+                    condition: condition,
+                    items: grvItems,
+                    createdDate: new Date().toISOString().split('T')[0],
+                    status: 'draft'
+                };
+                
+                // Save to localStorage
+                localStorage.setItem('jscGRVData', JSON.stringify(grvData));
+                
+                console.log('GRV saved successfully:', grvData[requestId]);
+                showNotification('GRV saved successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error saving GRV:', error);
+                showNotification('Error saving GRV data', 'error');
+            }
+        }
+
+        // Complete GRV Process
+        function completeGRV(requestId) {
+            if (!grvData[requestId]) {
+                showNotification('Please save GRV data first', 'error');
+                return;
+            }
+            
+            // Update GRV status
+            grvData[requestId].status = 'completed';
+            grvData[requestId].completedDate = new Date().toISOString().split('T')[0];
+            
+            // Update request status
+            const request = procurementData.requests.find(r => r.id === requestId);
+            if (request) {
+                request.status = 'completed';
+                request.grvCompleted = true;
+                request.grvDate = new Date().toISOString().split('T')[0];
+                
+                // Add GRV completion to approvals
+                request.approvals.push({
+                    role: 'Stores Department',
+                    status: "completed",
+                    date: new Date().toISOString().split('T')[0],
+                    comments: "Goods received and GRV completed",
+                    approvedBy: currentUser.name
+                });
+            }
+            
+            // Save all data
+            localStorage.setItem('jscGRVData', JSON.stringify(grvData));
+            localStorage.setItem('jscProcurementData', JSON.stringify(procurementData));
+            
+            showNotification('GRV completed! Goods officially received.', 'success');
+            
+            // Close modal and refresh
+            document.getElementById('grv-modal').style.display = 'none';
+            loadProcurement();
+            loadDashboard();
+            loadMyRequests();
+        }
+
+        // Print GRV
+        function printGRV(requestId) {
+            const request = procurementData.requests.find(r => r.id === requestId);
+            const grv = grvData[requestId];
+            
+            if (!grv) {
+                showNotification('Please save GRV data first', 'error');
+                return;
+            }
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>GRV-${requestId}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+                        .section { margin-bottom: 20px; }
+                        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f5f5f5; }
+                        .signature-area { margin-top: 50px; display: flex; justify-content: space-between; }
+                        .signature-box { width: 200px; border-top: 1px solid #333; padding-top: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>JUDICIAL SERVICE COMMISSION</h1>
+                        <h2>GOODS RECEIVED VOUCHER</h2>
+                        <p>GRV-${requestId} | Date: ${grv.completedDate || grv.createdDate}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <table>
+                            <tr><th>Request ID:</th><td>${requestId}</td><th>Supplier:</th><td>${request.selectedSupplier || 'N/A'}</td></tr>
+                            <tr><th>Delivery Date:</th><td>${grv.deliveryDate}</td><th>Received By:</th><td>${grv.receivedBy}</td></tr>
+                            <tr><th>Delivery Note:</th><td>${grv.deliveryNote || 'N/A'}</td><th>Condition:</th><td>${grv.condition}</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div class="section">
+                        <h3>ITEMS RECEIVED</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item Description</th>
+                                    <th>Ordered Qty</th>
+                                    <th>Received Qty</th>
+                                    <th>Condition</th>
+                                    <th>Remarks</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${grv.items.map(item => `
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${item.orderedQuantity}</td>
+                                        <td>${item.receivedQuantity}</td>
+                                        <td>${item.condition}</td>
+                                        <td>${item.remarks || '-'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="signature-area">
+                        <div class="signature-box">
+                            <p><strong>Received By:</strong></p>
+                            <p>Name: ${grv.receivedBy}</p>
+                            <p>Date: ${grv.deliveryDate}</p>
+                        </div>
+                        <div class="signature-box">
+                            <p><strong>Stores Officer:</strong></p>
+                            <p>Name: ___________________</p>
+                            <p>Date: ___________________</p>
+                        </div>
+                        <div class="signature-box">
+                            <p><strong>Department Head:</strong></p>
+                            <p>Name: ___________________</p>
+                            <p>Date: ___________________</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // View GRV History
+        function viewGRVHistory(requestId) {
+            const grv = grvData[requestId];
+            if (!grv) {
+                showNotification('No GRV found for this request', 'info');
+                return;
+            }
+            
+            const modal = document.getElementById('grv-modal');
+            const content = document.getElementById('grv-content');
+            
+            content.innerHTML = `
+                <div class="card">
+                    <h3>GRV History - ${requestId}</h3>
+                    <p><strong>Status:</strong> <span class="status ${grv.status}">${grv.status.toUpperCase()}</span></p>
+                    <p><strong>Created:</strong> ${formatDate(grv.createdDate)}</p>
+                    ${grv.completedDate ? `<p><strong>Completed:</strong> ${formatDate(grv.completedDate)}</p>` : ''}
+                    <p><strong>Received By:</strong> ${grv.receivedBy}</p>
+                </div>
+                
+                <div class="card">
+                    <h4>Received Items</h4>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Ordered</th>
+                                <th>Received</th>
+                                <th>Condition</th>
+                                <th>Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${grv.items.map(item => `
+                                <tr>
+                                    <td>${item.description}</td>
+                                    <td>${item.orderedQuantity}</td>
+                                    <td>${item.receivedQuantity}</td>
+                                    <td><span class="status ${item.condition === 'Good' ? 'completed' : 'warning'}">${item.condition}</span></td>
+                                    <td>${item.remarks || '-'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'draft': 'Draft',
+                'submitted': 'Submitted',
+                'review': 'Under Review',
+                'approved': 'Approved',
+                'rejected': 'Rejected',
+                'procurement': 'In Procurement',
+                'completed': 'Completed'
+            };
+            return statusMap[status] || status;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
