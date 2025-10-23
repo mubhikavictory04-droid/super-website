@@ -883,7 +883,7 @@
     <div id="login-page" class="login-container">
         <div class="login-box">
             <div class="login-header">
-                <h1><i class="fas fa-shopping-cart"></i> JSC eProcure</h1>
+                <h1><i class="fas fa-shopping-cart"></i> JSC eProcurement</h1>
                 <p>Electronic Purchasing Requisition & Procurement System</p>
             </div>
             <form id="login-form">
@@ -914,7 +914,7 @@
                 <button type="submit"><i class="fas fa-sign-in-alt"></i> Login to System</button>
             </form>
             <div class="login-footer">
-                <p>JSC Organization &copy; 2025</p>
+                <p>Judicial Service Commission &copy; 2025</p>
             </div>
         </div>
     </div>
@@ -925,7 +925,7 @@
             <div class="container">
                 <div class="header-content">
                     <div class="logo">
-                        <i class="fas fa-shopping-cart"></i> JSC eProcure
+                        <i class="fas fa-shopping-cart"></i> JSC eProcurement
                     </div>
                     <div class="user-info">
                         <div class="user-avatar" id="user-avatar">JD</div>
@@ -969,7 +969,7 @@
                     <!-- Dashboard Tab -->
                     <div id="dashboard" class="tab-content active">
                         <div class="page-header">
-                            <h1 class="page-title"><i class="fas fa-tachometer-alt"></i> JSC Procurement Dashboard</h1>
+                            <h1 class="page-title"><i class="fas fa-tachometer-alt"></i> WELCOME TO THE JSC PROCUREMENT DASHBOARD</h1>
                             <div class="page-actions">
                                 <button class="btn btn-primary" id="refresh-dashboard"><i class="fas fa-sync-alt"></i> Refresh</button>
                             </div>
@@ -1206,24 +1206,197 @@
                         </div>
                     </div>
                     
-                    <!-- Reports Tab -->
-                    <div id="reports" class="tab-content">
-                        <div class="page-header">
-                            <h1 class="page-title"><i class="fas fa-chart-bar"></i> Procurement Reports</h1>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="empty-state">
-                                <i class="fas fa-chart-bar"></i>
-                                <p>No data available for reports</p>
-                                <p class="text-muted">Reports will be generated once procurement data is available</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+                    <!-- Replace the entire Reports Tab section with this code: -->
+
+<!-- Reports Tab -->
+<div id="reports" class="tab-content">
+    <div class="page-header">
+        <h1 class="page-title"><i class="fas fa-chart-bar"></i> Procurement Reports & Analytics</h1>
+        <div class="page-actions">
+            <button class="btn btn-primary" id="refresh-reports"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="btn btn-success" id="export-reports"><i class="fas fa-download"></i> Export</button>
         </div>
     </div>
+    
+    <!-- Report Filters -->
+    <div class="card">
+        <h3>Report Filters</h3>
+        <div class="form-row">
+            <div class="form-group">
+                <label for="report-period">Report Period</label>
+                <select id="report-period">
+                    <option value="current_month">Current Month</option>
+                    <option value="last_month">Last Month</option>
+                    <option value="current_quarter">Current Quarter</option>
+                    <option value="last_quarter">Last Quarter</option>
+                    <option value="current_year">Current Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="start-date">Start Date</label>
+                <input type="date" id="start-date">
+            </div>
+            <div class="form-group">
+                <label for="end-date">End Date</label>
+                <input type="date" id="end-date">
+            </div>
+            <div class="form-group">
+                <label for="department-filter">Department</label>
+                <select id="department-filter">
+                    <option value="all">All Departments</option>
+                    <option value="IT">IT Department</option>
+                    <option value="Administration">Administration</option>
+                    <option value="Transport">Transport</option>
+                </select>
+            </div>
+        </div>
+        <div class="action-buttons">
+            <button class="btn btn-primary" id="generate-report"><i class="fas fa-chart-bar"></i> Generate Report</button>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-number" id="total-amount">$0.00</div>
+            <div class="stat-label">Total Procurement Value</div>
+        </div>
+        <div class="stat-card success">
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-number" id="completed-requests">0</div>
+            <div class="stat-label">Completed Requests</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number" id="avg-processing-time">0</div>
+            <div class="stat-label">Avg Processing (Days)</div>
+        </div>
+        <div class="stat-card info">
+            <div class="stat-icon">
+                <i class="fas fa-percentage"></i>
+            </div>
+            <div class="stat-number" id="completion-rate">0%</div>
+            <div class="stat-label">Completion Rate</div>
+        </div>
+    </div>
+
+    <!-- Charts and Visualizations -->
+    <div class="form-row">
+        <div class="form-group" style="flex: 1;">
+            <div class="card">
+                <h3>Requests by Status</h3>
+                <div id="status-chart" style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px;">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-pie"></i>
+                        <p>No data available for chart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <div class="card">
+                <h3>Spending by Department</h3>
+                <div id="department-chart" style="height: 300px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 8px;">
+                    <div class="empty-state">
+                        <i class="fas fa-chart-bar"></i>
+                        <p>No data available for chart</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Reports -->
+    <div class="card">
+        <h3>Detailed Procurement Report</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Request ID</th>
+                        <th>Department</th>
+                        <th>Title</th>
+                        <th>Total Cost</th>
+                        <th>Status</th>
+                        <th>Date Submitted</th>
+                        <th>Approval Date</th>
+                        <th>Processing Time</th>
+                    </tr>
+                </thead>
+                <tbody id="detailed-report-table">
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>No report data available</p>
+                            <p class="text-muted">Generate a report to view detailed information</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Approval Workflow Analytics -->
+    <div class="card">
+        <h3>Approval Workflow Analytics</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Approval Stage</th>
+                        <th>Avg. Processing Time</th>
+                        <th>Total Approved</th>
+                        <th>Total Rejected</th>
+                        <th>Approval Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="workflow-analytics-table">
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <p>No workflow analytics available</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Supplier Performance -->
+    <div class="card">
+        <h3>Supplier Performance</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Supplier</th>
+                        <th>Total Orders</th>
+                        <th>Total Amount</th>
+                        <th>Avg. Delivery Time</th>
+                        <th>Completion Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="supplier-performance-table">
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <i class="fas fa-truck"></i>
+                            <p>No supplier data available</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+        
 
     <!-- Notification Element -->
     <div id="notification" class="notification"></div>
@@ -1464,7 +1637,414 @@
             document.querySelectorAll('.menu-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const tabId = this.getAttribute('data-tab');
-                    switchTab(tabId);
+                    s// Add these event listeners to the initializeEventListeners function:
+document.getElementById('refresh-reports').addEventListener('click', loadReports);
+document.getElementById('export-reports').addEventListener('click', exportReports);
+document.getElementById('generate-report').addEventListener('click', generateReport);
+
+// Add this function to load reports when switching to reports tab
+function switchTab(tabId) {
+    // Remove active class from all tabs
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    
+    // Add active class to clicked tab
+    document.querySelector(`.menu-item[data-tab="${tabId}"]`).classList.add('active');
+    
+    // Hide all tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    document.getElementById(tabId).classList.add('active');
+    
+    // Refresh data for the tab
+    if (tabId === 'dashboard') {
+        loadDashboard();
+    } else if (tabId === 'my-requests') {
+        loadMyRequests();
+    } else if (tabId === 'approvals') {
+        loadApprovals();
+    } else if (tabId === 'procurement') {
+        loadProcurement();
+    } else if (tabId === 'reports') {
+        loadReports();
+    }
+}
+
+// Reports Functions
+function loadReports() {
+    generateReport();
+}
+
+function generateReport() {
+    const period = document.getElementById('report-period').value;
+    const startDate = document.getElementById('start-date').value;
+    const endDate = document.getElementById('end-date').value;
+    const department = document.getElementById('department-filter').value;
+    
+    // Filter requests based on criteria
+    let filteredRequests = procurementData.requests.filter(request => {
+        // Date filtering
+        const requestDate = new Date(request.dateSubmitted);
+        let dateMatch = true;
+        
+        if (period === 'custom' && startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            dateMatch = requestDate >= start && requestDate <= end;
+        } else {
+            // Handle other periods (simplified for demo)
+            dateMatch = true;
+        }
+        
+        // Department filtering
+        const departmentMatch = department === 'all' || request.department === department;
+        
+        return dateMatch && departmentMatch;
+    });
+    
+    updateReportSummary(filteredRequests);
+    updateDetailedReport(filteredRequests);
+    updateWorkflowAnalytics(filteredRequests);
+    updateSupplierPerformance();
+    updateCharts(filteredRequests);
+}
+
+function updateReportSummary(requests) {
+    const totalAmount = requests.reduce((sum, request) => sum + request.totalCost, 0);
+    const completedRequests = requests.filter(req => req.status === 'completed').length;
+    const totalRequests = requests.length;
+    const completionRate = totalRequests > 0 ? ((completedRequests / totalRequests) * 100).toFixed(1) : 0;
+    
+    // Calculate average processing time
+    let totalProcessingTime = 0;
+    let processedCount = 0;
+    
+    requests.forEach(request => {
+        if (request.completionDate) {
+            const submitDate = new Date(request.dateSubmitted);
+            const completeDate = new Date(request.completionDate);
+            const processingTime = (completeDate - submitDate) / (1000 * 60 * 60 * 24); // Convert to days
+            totalProcessingTime += processingTime;
+            processedCount++;
+        }
+    });
+    
+    const avgProcessingTime = processedCount > 0 ? Math.round(totalProcessingTime / processedCount) : 0;
+    
+    document.getElementById('total-amount').textContent = `$${totalAmount.toFixed(2)}`;
+    document.getElementById('completed-requests').textContent = completedRequests;
+    document.getElementById('avg-processing-time').textContent = avgProcessingTime;
+    document.getElementById('completion-rate').textContent = `${completionRate}%`;
+}
+
+function updateDetailedReport(requests) {
+    const table = document.getElementById('detailed-report-table');
+    
+    if (requests.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <p>No report data available</p>
+                    <p class="text-muted">Generate a report to view detailed information</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    table.innerHTML = '';
+    requests.forEach(request => {
+        const processingTime = request.completionDate ? 
+            Math.round((new Date(request.completionDate) - new Date(request.dateSubmitted)) / (1000 * 60 * 60 * 24)) : 
+            'N/A';
+            
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${request.id}</td>
+            <td>${request.department}</td>
+            <td>${request.title}</td>
+            <td>$${request.totalCost.toFixed(2)}</td>
+            <td><span class="status ${request.status}">${getStatusText(request.status)}</span></td>
+            <td>${formatDate(request.dateSubmitted)}</td>
+            <td>${request.approvalDate ? formatDate(request.approvalDate) : 'N/A'}</td>
+            <td>${processingTime}</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+function updateWorkflowAnalytics(requests) {
+    const table = document.getElementById('workflow-analytics-table');
+    
+    const stages = ['Administrator', 'Provincial Head', 'Head Office', 'Procurement Officer'];
+    const analytics = [];
+    
+    stages.forEach(stage => {
+        const stageRequests = requests.filter(req => 
+            req.approvals.some(approval => approval.role === stage)
+        );
+        
+        const approved = stageRequests.filter(req => 
+            req.approvals.find(approval => approval.role === stage)?.status === 'approved'
+        ).length;
+        
+        const rejected = stageRequests.filter(req => 
+            req.approvals.find(approval => approval.role === stage)?.status === 'rejected'
+        ).length;
+        
+        const total = stageRequests.length;
+        const approvalRate = total > 0 ? ((approved / total) * 100).toFixed(1) : 0;
+        
+        // Calculate average processing time for this stage
+        let totalTime = 0;
+        let timeCount = 0;
+        
+        stageRequests.forEach(request => {
+            const stageApproval = request.approvals.find(approval => approval.role === stage);
+            if (stageApproval && stageApproval.date) {
+                const submitDate = new Date(request.dateSubmitted);
+                const approvalDate = new Date(stageApproval.date);
+                const processingTime = (approvalDate - submitDate) / (1000 * 60 * 60 * 24);
+                totalTime += processingTime;
+                timeCount++;
+            }
+        });
+        
+        const avgProcessingTime = timeCount > 0 ? Math.round(totalTime / timeCount) : 0;
+        
+        analytics.push({
+            stage,
+            avgProcessingTime,
+            approved,
+            rejected,
+            approvalRate
+        });
+    });
+    
+    if (analytics.every(a => a.approved === 0 && a.rejected === 0)) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-state">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <p>No workflow analytics available</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    table.innerHTML = '';
+    analytics.forEach(analytic => {
+        if (analytic.approved > 0 || analytic.rejected > 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${analytic.stage}</td>
+                <td>${analytic.avgProcessingTime} days</td>
+                <td>${analytic.approved}</td>
+                <td>${analytic.rejected}</td>
+                <td>${analytic.approvalRate}%</td>
+            `;
+            table.appendChild(row);
+        }
+    });
+}
+
+function updateSupplierPerformance() {
+    const table = document.getElementById('supplier-performance-table');
+    
+    // Collect supplier data from quotations
+    const supplierData = {};
+    
+    Object.values(procurementData.quotations).forEach(quotations => {
+        quotations.forEach(quote => {
+            if (!supplierData[quote.supplierName]) {
+                supplierData[quote.supplierName] = {
+                    totalOrders: 0,
+                    totalAmount: 0,
+                    deliveryTimes: [],
+                    completedOrders: 0
+                };
+            }
+            
+            supplierData[quote.supplierName].totalOrders++;
+            supplierData[quote.supplierName].totalAmount += quote.amount;
+            supplierData[quote.supplierName].deliveryTimes.push(quote.deliveryDays);
+            
+            if (quote.selected) {
+                supplierData[quote.supplierName].completedOrders++;
+            }
+        });
+    });
+    
+    const suppliers = Object.keys(supplierData);
+    
+    if (suppliers.length === 0) {
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty-state">
+                    <i class="fas fa-truck"></i>
+                    <p>No supplier data available</p>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    table.innerHTML = '';
+    suppliers.forEach(supplier => {
+        const data = supplierData[supplier];
+        const avgDeliveryTime = data.deliveryTimes.length > 0 ? 
+            Math.round(data.deliveryTimes.reduce((a, b) => a + b) / data.deliveryTimes.length) : 0;
+        const completionRate = data.totalOrders > 0 ? 
+            ((data.completedOrders / data.totalOrders) * 100).toFixed(1) : 0;
+        
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${supplier}</td>
+            <td>${data.totalOrders}</td>
+            <td>$${data.totalAmount.toFixed(2)}</td>
+            <td>${avgDeliveryTime} days</td>
+            <td>${completionRate}%</td>
+        `;
+        table.appendChild(row);
+    });
+}
+
+function updateCharts(requests) {
+    updateStatusChart(requests);
+    updateDepartmentChart(requests);
+}
+
+function updateStatusChart(requests) {
+    const statusContainer = document.getElementById('status-chart');
+    
+    if (requests.length === 0) {
+        statusContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-chart-pie"></i>
+                <p>No data available for chart</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Count requests by status
+    const statusCounts = {
+        'draft': 0,
+        'submitted': 0,
+        'review': 0,
+        'approved': 0,
+        'rejected': 0,
+        'procurement': 0,
+        'completed': 0
+    };
+    
+    requests.forEach(request => {
+        statusCounts[request.status] = (statusCounts[request.status] || 0) + 1;
+    });
+    
+    // Create simple text-based chart for demo
+    let chartHTML = '<div style="width: 100%; padding: 20px;">';
+    Object.entries(statusCounts).forEach(([status, count]) => {
+        if (count > 0) {
+            const percentage = (count / requests.length) * 100;
+            chartHTML += `
+                <div style="margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="font-weight: 500;">${getStatusText(status)}</span>
+                        <span>${count} (${percentage.toFixed(1)}%)</span>
+                    </div>
+                    <div style="background: #e9ecef; border-radius: 4px; height: 8px;">
+                        <div style="background: var(--${getStatusColor(status)}); height: 100%; border-radius: 4px; width: ${percentage}%"></div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+    chartHTML += '</div>';
+    
+    statusContainer.innerHTML = chartHTML;
+}
+
+function updateDepartmentChart(requests) {
+    const deptContainer = document.getElementById('department-chart');
+    
+    if (requests.length === 0) {
+        deptContainer.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-chart-bar"></i>
+                <p>No data available for chart</p>
+            </div>
+        `;
+        return;
+    }
+    
+    // Calculate spending by department
+    const deptSpending = {};
+    requests.forEach(request => {
+        if (!deptSpending[request.department]) {
+            deptSpending[request.department] = 0;
+        }
+        deptSpending[request.department] += request.totalCost;
+    });
+    
+    // Create simple bar chart for demo
+    const maxSpending = Math.max(...Object.values(deptSpending));
+    let chartHTML = '<div style="width: 100%; padding: 20px;">';
+    Object.entries(deptSpending).forEach(([dept, spending]) => {
+        const percentage = (spending / maxSpending) * 100;
+        chartHTML += `
+            <div style="margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-weight: 500;">${dept}</span>
+                    <span>$${spending.toFixed(2)}</span>
+                </div>
+                <div style="background: #e9ecef; border-radius: 4px; height: 20px;">
+                    <div style="background: var(--primary); height: 100%; border-radius: 4px; width: ${percentage}%"></div>
+                </div>
+            </div>
+        `;
+    });
+    chartHTML += '</div>';
+    
+    deptContainer.innerHTML = chartHTML;
+}
+
+function getStatusColor(status) {
+    const colorMap = {
+        'draft': 'secondary',
+        'submitted': 'info',
+        'review': 'warning',
+        'approved': 'success',
+        'rejected': 'danger',
+        'procurement': 'info',
+        'completed': 'success'
+    };
+    return colorMap[status] || 'secondary';
+}
+
+function exportReports() {
+    showNotification('Export functionality would generate Excel/PDF reports in production', 'info');
+}
+
+// Initialize date filters
+function initializeDateFilters() {
+    const today = new Date();
+    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    document.getElementById('start-date').valueAsDate = firstDay;
+    document.getElementById('end-date').valueAsDate = lastDay;
+}
+
+// Call this in your initializeEventListeners function
+initializeDateFilters();witchTab(tabId);
+                    
                 });
             });
             
@@ -2976,4 +3556,5 @@
         }
     </script>
 </body>
+
 </html>
